@@ -43,9 +43,8 @@ y1 -= 1
 print(X1[:5])
 fig = plt.figure()
 
-plt.scatter(X1[k1][y1==0], X1[k2][y1==0], c='r')
-plt.scatter(X1[k1][y1==1], X1[k2][y1==1], c='c')
-
+plt.scatter(X1[k1][y1 == 0], X1[k2][y1 == 0], c='r')
+plt.scatter(X1[k1][y1 == 1], X1[k2][y1 == 1], c='c')
 plt.xlabel(k1)
 plt.ylabel(k2)
 #fig.savefig('main.jpg', dpi=100)
