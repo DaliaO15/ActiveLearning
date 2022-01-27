@@ -113,3 +113,4 @@ ax.scatter(x=x_component[~is_correct], y=y_component[~is_correct], c='r', marker
 ax.set_title('Classification accuracy after {n} queries: {final_acc:.3f}'.format(n=n_queries, final_acc=performance_history[-1]))
 ax.legend(loc='lower right')
 plt.show()
+
