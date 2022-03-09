@@ -24,7 +24,7 @@ from modAL.disagreement import vote_entropy_sampling     #https://modal-python.r
 import functions as fun
 
 # Loading data sets
-full_data_BatchA = pd.read_csv('/home/jovyan/Thesis_ActLearn_DOP_2022/main/active_learning/data/full_data_BatchA.csv')
+full_data_BatchA = pd.read_csv('C:/Users/dalia/PycharmProjects/Thesis_DS_2022/Thesis_UU/My_examples/full_data_BatchA.csv')
 y = full_data_BatchA['Label'].to_numpy()
 X_morgan = full_data_BatchA.drop(['Label'], axis = 1).to_numpy()
 
@@ -35,7 +35,7 @@ rf_clf1 = RandomForestClassifier(max_depth=10, random_state=0, n_jobs = -1)
 ada_clf1 = AdaBoostClassifier(n_estimators=10, random_state=0)
 
 # Parameters for ML model
-train_size = 0.1
+train_size = 0.05
 test_size = 0.3
 
 #Generating test, training and pool
@@ -43,14 +43,7 @@ x_train, y_train, x_test, y_test, x_pool, y_pool = fun.split(x_dataset=X_morgan,
                                                              ini_train_size= train_size, test_size=test_size)
 
 # ------------------- ACTIVE LEARNING -------------------
- 
-# Parameters for AL
-N_QUERIES = int(2*len(x_pool)/3)
 
-#Creating the committee
-# a list of ActiveLearners:
-learners = [svm_clf1, knn_clf1, rf_clf1]
-query_strategy=vote_entropy_sampling
 
 def initialise_committe(x_train, y_train,classifiers_list, query_str):
     # initializing Committee members
@@ -70,6 +63,7 @@ def initialise_committe(x_train, y_train,classifiers_list, query_str):
     # assembling the committee
     committee = Committee(learner_list=learner_list)
     return committee
+
 
 # Active learning with QBC
 def active_learnig_train_committee(n_queries, x_train, y_train, x_test, y_test, x_pool, y_pool, classifiers_list, query_str):
@@ -112,6 +106,34 @@ def active_learnig_train_committee(n_queries, x_train, y_train, x_test, y_test, 
         
     return performance_history , cf_matrix_history, committee
 
+
+# Parameters for AL
+N_QUERIES = 50 # int(2*len(x_pool)/3)
+# Creating the committee form a list of ActiveLearners:
+learners1 = [svm_clf1, knn_clf1, rf_clf1]
+committiees = [learners1]
+query_strategy = vote_entropy_sampling
+
+# Timer
+tic = timeit.default_timer()
+
+cf_mat_x_classifr = []
+save = False
+count = 0
+for lista in committiees:
+
+    print(f'Training with committee {list}')
+
+    _, cf_mat_his, committee = active_learnig_train_committee(n_queries = N_QUERIES, x_train=x_train, y_train = y_train,
+                                                              x_test = x_test, y_test = y_test, x_pool = x_pool, y_pool = y_pool,
+                                                              classifiers_list = lista, query_str = query_strategy)
+    cf_mat_x_classifr.append(cf_mat_his)
+
+    # Saving model
+    if save:
+        filename = "".join(["home/jovyan/Thesis_ActLearn_DOP_2022_/main/active_learning/qcb_entropy_default_models/committe",str(count),".sav"])
+
+    count += 1
 
 print('Pass')
 
